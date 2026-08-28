@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GrandmastersHub.Application\GrandmastersHub.Application.csproj" />
+    <ProjectReference Include="..\GrandmastersHub.Domain\GrandmastersHub.Domain.csproj" />
+  </ItemGroup>
+
+</Project>

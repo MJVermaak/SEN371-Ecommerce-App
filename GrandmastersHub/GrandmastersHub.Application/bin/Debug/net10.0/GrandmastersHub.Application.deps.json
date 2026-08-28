@@ -1,0 +1,39 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v10.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v10.0": {
+      "GrandmastersHub.Application/1.0.0": {
+        "dependencies": {
+          "GrandmastersHub.Domain": "1.0.0"
+        },
+        "runtime": {
+          "GrandmastersHub.Application.dll": {}
+        }
+      },
+      "GrandmastersHub.Domain/1.0.0": {
+        "runtime": {
+          "GrandmastersHub.Domain.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "GrandmastersHub.Application/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "GrandmastersHub.Domain/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}
