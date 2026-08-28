@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="GrandmastersHub.Api/GrandmastersHub.Api.csproj" />
+  <Project Path="GrandmastersHub.Application/GrandmastersHub.Application.csproj" />
+  <Project Path="GrandmastersHub.Domain/GrandmastersHub.Domain.csproj" />
+  <Project Path="GrandmastersHub.Infrastructure/GrandmastersHub.Infrastructure.csproj" />
+</Solution>
