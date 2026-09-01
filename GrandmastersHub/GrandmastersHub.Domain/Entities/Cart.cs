@@ -4,7 +4,9 @@ using System.Text;
 
 namespace GrandmastersHub.Domain.Entities
 {
-    internal class Cart
+    public class Cart
     {
+        public int CartId { get; set; }
+        public int UserId { get; set; }
     }
 }

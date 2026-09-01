@@ -4,7 +4,11 @@ using System.Text;
 
 namespace GrandmastersHub.Domain.Entities
 {
-    internal class CartItem
+    public class CartItem
     {
+        public int CartItemId { get; set; }
+        public int CartId { get; set; }
+        public int ProductId { get; set; }
+        public int Quantity { get; set; }
     }
 }
