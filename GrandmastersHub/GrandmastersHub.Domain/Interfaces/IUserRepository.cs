@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using GrandmastersHub.Domain.Entities;
 
-namespace GrandmastersHub.Domain.Interfaces
+namespace GrandmastersHub.Domain.Interfaces;
+
+public interface IUserRepository
 {
-    internal class IUserRepository
-    {
-    }
+    Task<User?> GetByNormalizedEmailAsync(string normalizedEmail, CancellationToken cancellationToken = default);
+    Task<User?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
+    Task<bool> TryAddAsync(User user, CancellationToken cancellationToken = default);
 }
