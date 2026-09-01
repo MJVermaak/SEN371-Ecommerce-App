@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+namespace GrandmastersHub.Domain.Enums;
 
-namespace GrandmastersHub.Domain.Enums
+public enum UserRole
 {
-    internal class UserRole
-    {
-        //Roles are Customer and Admin
-    }
+    Customer = 0,
+    Admin = 1
 }

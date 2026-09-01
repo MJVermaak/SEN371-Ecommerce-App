@@ -3,4 +3,5 @@
   <Project Path="GrandmastersHub.Application/GrandmastersHub.Application.csproj" />
   <Project Path="GrandmastersHub.Domain/GrandmastersHub.Domain.csproj" />
   <Project Path="GrandmastersHub.Infrastructure/GrandmastersHub.Infrastructure.csproj" />
+  <Project Path="GrandmastersHub.Tests/GrandmastersHub.Tests.csproj" />
 </Solution>

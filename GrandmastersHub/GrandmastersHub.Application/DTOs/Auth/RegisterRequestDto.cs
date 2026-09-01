@@ -1,10 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using System.ComponentModel.DataAnnotations;
 
-namespace GrandmastersHub.Application.DTOs.Auth
+namespace GrandmastersHub.Application.DTOs.Auth;
+
+public sealed class RegisterRequestDto
 {
-    internal class RegisterRequestDto
-    {
-    }
+    [Required, EmailAddress, MaxLength(254)]
+    public string Email { get; init; } = string.Empty;
+
+    [Required, MinLength(12), MaxLength(128)]
+    public string Password { get; init; } = string.Empty;
 }

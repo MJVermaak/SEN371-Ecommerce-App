@@ -1,10 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using GrandmastersHub.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 
-namespace GrandmastersHub.Infrastructure.Data
+namespace GrandmastersHub.Infrastructure.Data;
+
+public sealed class GrandmastersDbContext(DbContextOptions<GrandmastersDbContext> options) : DbContext(options)
 {
-    internal class GrandmastersDbContext
-    {
-    }
+    public DbSet<User> Users => Set<User>();
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder) =>
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(GrandmastersDbContext).Assembly);
 }
