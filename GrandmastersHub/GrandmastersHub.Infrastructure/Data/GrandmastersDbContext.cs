@@ -1,4 +1,8 @@
-﻿using System;
+using GrandmastersHub.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
+
+namespace GrandmastersHub.Infrastructure.Data;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using GrandmastersHub.Domain.Entities;
@@ -6,20 +10,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GrandmastersHub.Infrastructure.Data
 {
-    public class GrandmastersDbContext : DbContext
-    {
-        public GrandmastersDbContext(DbContextOptions<GrandmastersDbContext> options)
-            : base(options)
-        {
-        }
+    public DbSet<User> Users => Set<User>();
+    public DbSet<Category> Categories => Set<Category>();
+    public DbSet<Product> Products => Set<Product>();
+    public DbSet<Cart> Carts => Set<Cart>();
+    public DbSet<CartItem> CartItems => Set<CartItem>();
+    public DbSet<Order> Orders => Set<Order>();
+    public DbSet<OrderItem> OrderItems => Set<OrderItem>();
+    public DbSet<Review> Reviews => Set<Review>();
 
-        public DbSet<User> Users { get; set; }
-        public DbSet<Product> Products { get; set; }
-        public DbSet<Category> Categories { get; set; }
-        public DbSet<Order> Orders { get; set; }
-        public DbSet<OrderItem> OrderItems { get; set; }
-        public DbSet<Cart> Carts { get; set; }
-        public DbSet<CartItem> CartItems { get; set; }
-        public DbSet<Review> Reviews { get; set; }
-    }
+    protected override void OnModelCreating(ModelBuilder modelBuilder) =>
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(GrandmastersDbContext).Assembly);
 }

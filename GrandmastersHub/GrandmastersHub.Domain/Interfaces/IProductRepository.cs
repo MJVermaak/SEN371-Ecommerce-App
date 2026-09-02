@@ -2,16 +2,13 @@
 using System.Collections.Generic;
 using System.Text;
 
-using GrandmastersHub.Domain.Entities;
+namespace GrandmastersHub.Domain.Interfaces;
 
-namespace GrandmastersHub.Domain.Interfaces
+public interface IProductRepository
 {
-    public interface IProductRepository
-    {
-        Task<IEnumerable<Product>> GetAllProductsAsync();
-        Task<Product?> GetProductByIdAsync(int id);
-        Task AddProductAsync(Product product);
-        Task UpdateProductAsync(Product product);
-        Task DeleteProductAsync(int id);
-    }
+    Task<IReadOnlyList<Product>> GetAllAsync(CancellationToken cancellationToken = default);
+    Task<Product?> GetByIdAsync(int id, CancellationToken cancellationToken = default);
+    Task AddAsync(Product product, CancellationToken cancellationToken = default);
+    Task UpdateAsync(Product product, CancellationToken cancellationToken = default);
+    Task DeleteAsync(int id, CancellationToken cancellationToken = default);
 }
