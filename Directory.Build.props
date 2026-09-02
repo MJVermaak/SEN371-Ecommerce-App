@@ -1,0 +1,6 @@
+<Project>
+  <PropertyGroup>
+    <!-- Work around missing prune metadata in the installed .NET 10 RC SDK. -->
+    <AllowMissingPrunePackageData>true</AllowMissingPrunePackageData>
+  </PropertyGroup>
+</Project>
