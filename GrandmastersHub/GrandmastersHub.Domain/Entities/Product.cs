@@ -1,6 +1,8 @@
-namespace GrandmastersHub.Domain.Entities;
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
 
-public class Product
+namespace GrandmastersHub.Domain.Entities
 {
     public int ProductId { get; set; }
     public int CategoryId { get; set; }

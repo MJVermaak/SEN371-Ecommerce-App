@@ -1,6 +1,8 @@
-namespace GrandmastersHub.Domain.Entities;
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
 
-public class Cart
+namespace GrandmastersHub.Domain.Entities
 {
     public int CartId { get; set; }
     public Guid UserId { get; set; }
