@@ -1,10 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using GrandmastersHub.Domain.Enums;
 
-namespace GrandmastersHub.Domain.Entities
+namespace GrandmastersHub.Domain.Entities;
+
+public class Order
 {
-    internal class Order
-    {
-    }
+    public int OrderId { get; set; }
+    public Guid UserId { get; set; }
+    public DateTimeOffset OrderDate { get; set; }
+    public OrderStatus Status { get; set; }
+    public decimal TotalAmount { get; set; }
+    public User? User { get; set; }
+    public ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
 }
