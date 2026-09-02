@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+namespace GrandmastersHub.Domain.Enums;
 
-namespace GrandmastersHub.Domain.Enums
+public enum OrderStatus
 {
-    internal class OrderStatus
-    {
-        //Values are Pending, Shipped, and Delivered
-    }
+    Pending = 0,
+    Shipped = 1,
+    Delivered = 2,
+    Cancelled = 3
 }

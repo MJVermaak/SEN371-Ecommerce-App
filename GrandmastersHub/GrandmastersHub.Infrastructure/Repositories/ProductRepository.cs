@@ -1,44 +1,44 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using GrandmastersHub.Domain.Entities;
 using GrandmastersHub.Domain.Interfaces;
 using GrandmastersHub.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
-namespace GrandmastersHub.Infrastructure.Repositories
+namespace GrandmastersHub.Infrastructure.Repositories;
 
+public sealed class ProductRepository(GrandmastersDbContext dbContext) : IProductRepository
 {
-    public class ProductRepository : IProductRepository
+    public async Task<IReadOnlyList<Product>> GetAllAsync(CancellationToken cancellationToken = default) =>
+        await dbContext.Products.AsNoTracking().Include(product => product.Category).ToListAsync(cancellationToken);
+
+    public Task<Product?> GetByIdAsync(int id, CancellationToken cancellationToken = default) =>
+        dbContext.Products.AsNoTracking()
+            .Include(product => product.Category)
+            .FirstOrDefaultAsync(product => product.ProductId == id, cancellationToken);
+
+    public async Task AddAsync(Product product, CancellationToken cancellationToken = default)
     {
-        private readonly GrandmastersDbContext _context;
+        await dbContext.Products.AddAsync(product, cancellationToken);
+        await dbContext.SaveChangesAsync(cancellationToken);
+    }
 
-        public ProductRepository(GrandmastersDbContext context)
+    public async Task UpdateAsync(Product product, CancellationToken cancellationToken = default)
+    {
+        dbContext.Products.Update(product);
+        await dbContext.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task DeleteAsync(int id, CancellationToken cancellationToken = default)
+    {
+        var product = await dbContext.Products.FindAsync([id], cancellationToken);
+        if (product is null)
         {
-            _context = context;
+            return;
         }
 
-        public async Task<IEnumerable<Product>> GetAllProductsAsync()
-        {
-            return await _context.Products.ToListAsync();
-        }
-
-        public async Task<Product?> GetProductByIdAsync(int id)
-        {
-            return await _context.Products.FindAsync(id);
-        }
-
-        public async Task AddProductAsync(Product product)
-        {
-            _context.Products.Add(product);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task UpdateProductAsync(Product product)
-        {
-            _context.Products.Update(product);
-            await _context.SaveChangesAsync();
-        }
+        dbContext.Products.Remove(product);
+        await dbContext.SaveChangesAsync(cancellationToken);
+    }
+}
 
         public async Task DeleteProductAsync(int id)
         {
