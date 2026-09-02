@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.11" />
     <PackageReference Include="xunit" Version="2.9.3" />
     <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -21,6 +22,7 @@
     <ProjectReference Include="..\GrandmastersHub.Application\GrandmastersHub.Application.csproj" />
     <ProjectReference Include="..\GrandmastersHub.Domain\GrandmastersHub.Domain.csproj" />
     <ProjectReference Include="..\GrandmastersHub.Infrastructure\GrandmastersHub.Infrastructure.csproj" />
+    <ProjectReference Include="..\GrandmastersHub.Api\GrandmastersHub.Api.csproj" />
   </ItemGroup>
 
 </Project>

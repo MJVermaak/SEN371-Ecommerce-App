@@ -1,10 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿namespace GrandmastersHub.Domain.Entities;
 
-namespace GrandmastersHub.Domain.Entities
+public class Inventory
 {
-    internal class Inventory
-    {
-    }
+    public int InventoryId { get; set; }
+
+    public int ProductVariantId { get; set; }
+
+    public ProductVariant? ProductVariant { get; set; }
+
+    public int Quantity { get; set; }
+
+    public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 }
