@@ -1,11 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿namespace GrandmastersHub.Domain.Entities;
 
-namespace GrandmastersHub.Domain.Entities
+public class Cart
 {
     public int CartId { get; set; }
-    public Guid UserId { get; set; }
+
+    public int UserId { get; set; }
+
     public User? User { get; set; }
-    public ICollection<CartItem> CartItems { get; set; } = new List<CartItem>();
+
+    public ICollection<CartItem> Items { get; set; } = new List<CartItem>();
+
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+    public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 }

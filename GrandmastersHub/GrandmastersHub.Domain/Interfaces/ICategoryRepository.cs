@@ -1,10 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using GrandmastersHub.Domain.Entities;
 
-namespace GrandmastersHub.Domain.Interfaces
+namespace GrandmastersHub.Domain.Interfaces;
+
+public interface ICategoryRepository
 {
-    internal class ICategoryRepository
-    {
-    }
+    Task<IEnumerable<Category>> GetAllAsync();
+
+    Task<Category?> GetByIdAsync(int id);
+
+    Task<Category?> GetByNameAsync(string name);
+
+    Task<Category> AddAsync(Category category);
+
+    Task UpdateAsync(Category category);
+
+    Task DeleteAsync(int id);
 }

@@ -1,53 +1,72 @@
-using GrandmastersHub.Domain.Entities;
+﻿using GrandmastersHub.Domain.Entities;
 using GrandmastersHub.Domain.Interfaces;
 using GrandmastersHub.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace GrandmastersHub.Infrastructure.Repositories;
 
-public sealed class ProductRepository(GrandmastersDbContext dbContext) : IProductRepository
+public class ProductRepository : IProductRepository
 {
-    public async Task<IReadOnlyList<Product>> GetAllAsync(CancellationToken cancellationToken = default) =>
-        await dbContext.Products.AsNoTracking().Include(product => product.Category).ToListAsync(cancellationToken);
+    private readonly GrandmastersDbContext _context;
 
-    public Task<Product?> GetByIdAsync(int id, CancellationToken cancellationToken = default) =>
-        dbContext.Products.AsNoTracking()
-            .Include(product => product.Category)
-            .FirstOrDefaultAsync(product => product.ProductId == id, cancellationToken);
-
-    public async Task AddAsync(Product product, CancellationToken cancellationToken = default)
+    public ProductRepository(GrandmastersDbContext context)
     {
-        await dbContext.Products.AddAsync(product, cancellationToken);
-        await dbContext.SaveChangesAsync(cancellationToken);
+        _context = context;
     }
 
-    public async Task UpdateAsync(Product product, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<Product>> GetAllAsync()
     {
-        dbContext.Products.Update(product);
-        await dbContext.SaveChangesAsync(cancellationToken);
+        return await _context.Products
+            .Include(p => p.Category)
+            .Include(p => p.Images)
+            .Include(p => p.Variants)
+            .ToListAsync();
     }
 
-    public async Task DeleteAsync(int id, CancellationToken cancellationToken = default)
+    public async Task<Product?> GetByIdAsync(int id)
     {
-        var product = await dbContext.Products.FindAsync([id], cancellationToken);
+        return await _context.Products
+            .Include(p => p.Category)
+            .Include(p => p.Images)
+            .Include(p => p.Variants)
+            .Include(p => p.Reviews)
+            .FirstOrDefaultAsync(p => p.ProductId == id);
+    }
+
+    public async Task<Product?> GetBySlugAsync(string slug)
+    {
+        return await _context.Products
+            .Include(p => p.Category)
+            .Include(p => p.Images)
+            .Include(p => p.Variants)
+            .FirstOrDefaultAsync(p => p.Slug == slug);
+    }
+
+    public async Task<Product> AddAsync(Product product)
+    {
+        await _context.Products.AddAsync(product);
+        await _context.SaveChangesAsync();
+
+        return product;
+    }
+
+    public async Task UpdateAsync(Product product)
+    {
+        _context.Products.Update(product);
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task DeleteAsync(int id)
+    {
+        var product = await _context.Products
+            .FirstOrDefaultAsync(p => p.ProductId == id);
+
         if (product is null)
         {
             return;
         }
 
-        dbContext.Products.Remove(product);
-        await dbContext.SaveChangesAsync(cancellationToken);
-    }
-}
-
-        public async Task DeleteProductAsync(int id)
-        {
-            var product = await _context.Products.FindAsync(id);
-            if (product != null)
-            {
-                _context.Products.Remove(product);
-                await _context.SaveChangesAsync();
-            }
-        }
+        _context.Products.Remove(product);
+        await _context.SaveChangesAsync();
     }
 }

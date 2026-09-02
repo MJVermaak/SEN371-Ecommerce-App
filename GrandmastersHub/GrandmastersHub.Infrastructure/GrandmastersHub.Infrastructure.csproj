@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
@@ -7,7 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.11" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.11" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.11">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.11" />
     <PackageReference Include="Microsoft.Extensions.Identity.Core" Version="10.0.11" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.15.0" />
   </ItemGroup>
@@ -16,14 +21,5 @@
     <ProjectReference Include="..\GrandmastersHub.Application\GrandmastersHub.Application.csproj" />
     <ProjectReference Include="..\GrandmastersHub.Domain\GrandmastersHub.Domain.csproj" />
   </ItemGroup>
-
-	<ItemGroup>
-		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.8" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.8" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.8">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
-	</ItemGroup>
 
 </Project>

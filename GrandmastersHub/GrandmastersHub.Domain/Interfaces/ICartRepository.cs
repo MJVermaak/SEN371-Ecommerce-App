@@ -1,10 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using GrandmastersHub.Domain.Entities;
 
-namespace GrandmastersHub.Domain.Interfaces
+namespace GrandmastersHub.Domain.Interfaces;
+
+public interface ICartRepository
 {
-    internal class ICartRepository
-    {
-    }
+    Task<Cart?> GetByIdAsync(int id);
+
+    Task<Cart?> GetByUserIdAsync(int userId);
+
+    Task<Cart> AddAsync(Cart cart);
+
+    Task UpdateAsync(Cart cart);
+
+    Task DeleteAsync(int id);
 }

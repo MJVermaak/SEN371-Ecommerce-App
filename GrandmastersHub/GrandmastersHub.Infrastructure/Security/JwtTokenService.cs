@@ -18,26 +18,21 @@ public sealed class JwtTokenService(IOptions<JwtOptions> options) : ITokenServic
         var expiresAt = DateTimeOffset.UtcNow.AddMinutes(_options.ExpiryMinutes);
         var claims = new[]
         {
-            new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
+            new Claim(JwtRegisteredClaimNames.Sub, user.UserId.ToString()),
             new Claim(JwtRegisteredClaimNames.Email, user.Email),
-            new Claim(ClaimTypes.Role, user.Role.ToString()),
+            new Claim(ClaimTypes.Role, user.Role),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
         var credentials = new SigningCredentials(
             new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.SigningKey)),
             SecurityAlgorithms.HmacSha256);
         var token = new JwtSecurityToken(
-            _options.Issuer,
-            _options.Audience,
-            claims,
+            _options.Issuer, _options.Audience, claims,
             expires: expiresAt.UtcDateTime,
             signingCredentials: credentials);
 
         return new AuthResponseDto(
             new JwtSecurityTokenHandler().WriteToken(token),
-            expiresAt,
-            user.Id,
-            user.Email,
-            user.Role.ToString());
+            expiresAt, user.UserId, user.Email, user.Role);
     }
 }
