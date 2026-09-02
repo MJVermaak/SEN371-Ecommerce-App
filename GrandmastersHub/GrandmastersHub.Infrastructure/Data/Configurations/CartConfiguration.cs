@@ -18,4 +18,4 @@ public class CartConfiguration : IEntityTypeConfiguration<Cart>
             .HasForeignKey(i => i.CartId)
             .OnDelete(DeleteBehavior.Cascade);
     }
-}
+} 

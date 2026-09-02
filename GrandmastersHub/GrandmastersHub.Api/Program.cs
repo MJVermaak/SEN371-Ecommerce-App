@@ -71,11 +71,11 @@ if (app.Environment.IsDevelopment())
 
 // Apply the checked-in EF Core migrations automatically for local development.
 // This keeps the database schema in sync with the source-controlled model.
-using (var scope = app.Services.CreateScope())
-{
-    var database = scope.ServiceProvider.GetRequiredService<GrandmastersDbContext>();
-    await database.Database.MigrateAsync();
-}
+// using (var scope = app.Services.CreateScope())
+// {
+//     var database = scope.ServiceProvider.GetRequiredService<GrandmastersDbContext>();
+//     await database.Database.MigrateAsync();
+// }
 app.UseHttpsRedirection();
 app.UseCors("AllowFrontend");
 app.UseMiddleware<GlobalErrorHandlingMiddleware>();
