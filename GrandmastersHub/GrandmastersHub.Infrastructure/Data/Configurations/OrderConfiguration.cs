@@ -1,35 +1,40 @@
-using GrandmastersHub.Domain.Entities;
+﻿using GrandmastersHub.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GrandmastersHub.Infrastructure.Data.Configurations;
 
-public sealed class OrderConfiguration : IEntityTypeConfiguration<Order>
+public class OrderConfiguration : IEntityTypeConfiguration<Order>
 {
     public void Configure(EntityTypeBuilder<Order> builder)
     {
-        builder.HasKey(order => order.OrderId);
-        builder.Property(order => order.Status).HasConversion<string>().HasMaxLength(32).IsRequired();
-        builder.Property(order => order.TotalAmount).HasPrecision(18, 2);
-        builder.HasOne(order => order.User)
-            .WithMany(user => user.Orders)
-            .HasForeignKey(order => order.UserId)
-            .OnDelete(DeleteBehavior.Restrict);
-    }
-}
+        builder.HasKey(o => o.OrderId);
 
-public sealed class OrderItemConfiguration : IEntityTypeConfiguration<OrderItem>
-{
-    public void Configure(EntityTypeBuilder<OrderItem> builder)
-    {
-        builder.HasKey(item => item.OrderItemId);
-        builder.Property(item => item.UnitPrice).HasPrecision(18, 2);
-        builder.HasOne(item => item.Order)
-            .WithMany(order => order.OrderItems)
-            .HasForeignKey(item => item.OrderId);
-        builder.HasOne(item => item.Product)
-            .WithMany(product => product.OrderItems)
-            .HasForeignKey(item => item.ProductId)
+        builder.Property(o => o.Status)
+            .IsRequired()
+            .HasMaxLength(50);
+
+        builder.Property(o => o.TotalAmount)
+            .HasPrecision(18, 2);
+
+        builder.HasOne(o => o.User)
+            .WithMany(u => u.Orders)
+            .HasForeignKey(o => o.UserId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasMany(o => o.Items)
+            .WithOne(i => i.Order)
+            .HasForeignKey(i => i.OrderId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasOne(o => o.Payment)
+            .WithOne(p => p.Order)
+            .HasForeignKey<Payment>(p => p.OrderId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasOne(o => o.Shipment)
+            .WithOne(s => s.Order)
+            .HasForeignKey<Shipment>(s => s.OrderId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

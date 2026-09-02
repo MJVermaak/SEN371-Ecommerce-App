@@ -1,10 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using GrandmastersHub.Domain.Entities;
 
-namespace GrandmastersHub.Domain.Interfaces
+namespace GrandmastersHub.Domain.Interfaces;
+
+public interface IOrderRepository
 {
-    internal class IOrderRepository
-    {
-    }
+    Task<IEnumerable<Order>> GetAllAsync();
+
+    Task<Order?> GetByIdAsync(int id);
+
+    Task<IEnumerable<Order>> GetByUserIdAsync(int userId);
+
+    Task<Order> AddAsync(Order order);
+
+    Task UpdateAsync(Order order);
+
+    Task DeleteAsync(int id);
 }

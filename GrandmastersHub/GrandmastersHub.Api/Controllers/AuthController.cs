@@ -12,9 +12,7 @@ public sealed class AuthController(IAuthService authService) : BaseApiController
     [HttpPost("register")]
     [ProducesResponseType<AuthResponseDto>(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public async Task<ActionResult<AuthResponseDto>> Register(
-        RegisterRequestDto request,
-        CancellationToken cancellationToken)
+    public async Task<ActionResult<AuthResponseDto>> Register(RegisterRequestDto request, CancellationToken cancellationToken)
     {
         var response = await authService.RegisterAsync(request, cancellationToken);
         return response is null
@@ -26,9 +24,7 @@ public sealed class AuthController(IAuthService authService) : BaseApiController
     [HttpPost("login")]
     [ProducesResponseType<AuthResponseDto>(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult<AuthResponseDto>> Login(
-        LoginRequestDto request,
-        CancellationToken cancellationToken)
+    public async Task<ActionResult<AuthResponseDto>> Login(LoginRequestDto request, CancellationToken cancellationToken)
     {
         var response = await authService.LoginAsync(request, cancellationToken);
         return response is null
@@ -38,19 +34,12 @@ public sealed class AuthController(IAuthService authService) : BaseApiController
 
     [Authorize]
     [HttpGet("me")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> Me(CancellationToken cancellationToken)
     {
         var subject = User.FindFirst(JwtRegisteredClaimNames.Sub)?.Value;
-        if (!Guid.TryParse(subject, out var userId))
-        {
-            return Unauthorized();
-        }
+        if (!int.TryParse(subject, out var userId)) return Unauthorized();
 
         var user = await authService.GetUserAsync(userId, cancellationToken);
-        return user is null
-            ? Unauthorized()
-            : Ok(new { user.Id, user.Email, Role = user.Role.ToString() });
+        return user is null ? Unauthorized() : Ok(new { user.UserId, user.Email, user.Role });
     }
 }

@@ -1,19 +1,55 @@
-using GrandmastersHub.Domain.Entities;
+﻿using GrandmastersHub.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GrandmastersHub.Infrastructure.Data.Configurations;
 
-public sealed class UserConfiguration : IEntityTypeConfiguration<User>
+public class UserConfiguration : IEntityTypeConfiguration<User>
 {
     public void Configure(EntityTypeBuilder<User> builder)
     {
-        builder.HasKey(user => user.Id);
-        builder.Property(user => user.FullName).HasMaxLength(200).IsRequired();
-        builder.Property(user => user.Email).HasMaxLength(254).IsRequired();
-        builder.Property(user => user.NormalizedEmail).HasMaxLength(254).IsRequired();
-        builder.HasIndex(user => user.NormalizedEmail).IsUnique();
-        builder.Property(user => user.PasswordHash).HasMaxLength(512).IsRequired();
-        builder.Property(user => user.Role).HasConversion<string>().HasMaxLength(32).IsRequired();
+        builder.HasKey(u => u.UserId);
+
+        builder.Property(u => u.FirstName)
+            .IsRequired()
+            .HasMaxLength(100);
+
+        builder.Property(u => u.LastName)
+            .IsRequired()
+            .HasMaxLength(100);
+
+        builder.Property(u => u.Email)
+            .IsRequired()
+            .HasMaxLength(255);
+
+        builder.HasIndex(u => u.Email)
+            .IsUnique();
+
+        builder.Property(u => u.PasswordHash)
+            .IsRequired();
+
+        builder.Property(u => u.Role)
+            .HasMaxLength(50)
+            .IsRequired();
+
+        builder.HasMany(u => u.Addresses)
+            .WithOne(a => a.User)
+            .HasForeignKey(a => a.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasMany(u => u.Orders)
+            .WithOne(o => o.User)
+            .HasForeignKey(o => o.UserId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasMany(u => u.Reviews)
+            .WithOne(r => r.User)
+            .HasForeignKey(r => r.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasOne(u => u.Cart)
+            .WithOne(c => c.User)
+            .HasForeignKey<Cart>(c => c.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

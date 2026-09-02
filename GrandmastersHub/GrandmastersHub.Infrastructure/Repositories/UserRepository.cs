@@ -1,32 +1,46 @@
 using GrandmastersHub.Domain.Entities;
 using GrandmastersHub.Domain.Interfaces;
 using GrandmastersHub.Infrastructure.Data;
-using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 
 namespace GrandmastersHub.Infrastructure.Repositories;
 
-public sealed class UserRepository(GrandmastersDbContext dbContext) : IUserRepository
+public class UserRepository : IUserRepository
 {
-    public Task<User?> GetByNormalizedEmailAsync(string normalizedEmail, CancellationToken cancellationToken = default) =>
-        dbContext.Users.AsNoTracking().SingleOrDefaultAsync(user => user.NormalizedEmail == normalizedEmail, cancellationToken);
+    private readonly GrandmastersDbContext _context;
 
-    public Task<User?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default) =>
-        dbContext.Users.AsNoTracking().SingleOrDefaultAsync(user => user.Id == id, cancellationToken);
+    public UserRepository(GrandmastersDbContext context) => _context = context;
 
-    public async Task<bool> TryAddAsync(User user, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<User>> GetAllAsync() => await _context.Users
+        .Include(u => u.Addresses).Include(u => u.Orders).Include(u => u.Reviews).ToListAsync();
+
+    public async Task<User?> GetByIdAsync(int id, CancellationToken cancellationToken = default) => await _context.Users
+        .Include(u => u.Addresses).Include(u => u.Orders).Include(u => u.Reviews).Include(u => u.Cart)
+        .FirstOrDefaultAsync(u => u.UserId == id, cancellationToken);
+
+    public async Task<User?> GetByEmailAsync(string email, CancellationToken cancellationToken = default) =>
+        await _context.Users.AsNoTracking().SingleOrDefaultAsync(
+            u => u.Email.ToLower() == email.Trim().ToLower(),
+            cancellationToken);
+
+    public async Task<User> AddAsync(User user, CancellationToken cancellationToken = default)
     {
-        dbContext.Users.Add(user);
-        try
-        {
-            await dbContext.SaveChangesAsync(cancellationToken);
-            return true;
-        }
-        catch (DbUpdateException exception) when (
-            exception.InnerException is SqliteException { SqliteExtendedErrorCode: 2067 })
-        {
-            dbContext.Entry(user).State = EntityState.Detached;
-            return false;
-        }
+        await _context.Users.AddAsync(user, cancellationToken);
+        await _context.SaveChangesAsync(cancellationToken);
+        return user;
+    }
+
+    public async Task UpdateAsync(User user, CancellationToken cancellationToken = default)
+    {
+        _context.Users.Update(user);
+        await _context.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task DeleteAsync(int id, CancellationToken cancellationToken = default)
+    {
+        var user = await _context.Users.FindAsync([id], cancellationToken);
+        if (user is null) return;
+        _context.Users.Remove(user);
+        await _context.SaveChangesAsync(cancellationToken);
     }
 }
