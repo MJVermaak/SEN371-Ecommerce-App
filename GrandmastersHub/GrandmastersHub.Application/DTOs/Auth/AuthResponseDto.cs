@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+namespace GrandmastersHub.Application.DTOs.Auth;
 
-namespace GrandmastersHub.Application.DTOs.Auth
-{
-    internal class AuthResponseDto
-    {
-    }
-}
+public sealed record AuthResponseDto(
+    string AccessToken,
+    DateTimeOffset ExpiresAtUtc,
+    Guid UserId,
+    string Email,
+    string Role);

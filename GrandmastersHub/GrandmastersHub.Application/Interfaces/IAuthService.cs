@@ -1,10 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using GrandmastersHub.Application.DTOs.Auth;
+using GrandmastersHub.Domain.Entities;
 
-namespace GrandmastersHub.Application.Interfaces
+namespace GrandmastersHub.Application.Interfaces;
+
+public interface IAuthService
 {
-    internal class IAuthService
-    {
-    }
+    Task<AuthResponseDto?> RegisterAsync(RegisterRequestDto request, CancellationToken cancellationToken = default);
+    Task<AuthResponseDto?> LoginAsync(LoginRequestDto request, CancellationToken cancellationToken = default);
+    Task<User?> GetUserAsync(Guid userId, CancellationToken cancellationToken = default);
+}
+
+public interface IPasswordService
+{
+    string Hash(User user, string password);
+    bool Verify(User user, string passwordHash, string password);
+}
+
+public interface ITokenService
+{
+    AuthResponseDto CreateToken(User user);
 }
