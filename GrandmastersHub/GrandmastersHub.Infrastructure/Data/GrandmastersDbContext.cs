@@ -2,8 +2,13 @@ using GrandmastersHub.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace GrandmastersHub.Infrastructure.Data;
+using System;
+using System.Collections.Generic;
+using System.Text;
+using GrandmastersHub.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 
-public sealed class GrandmastersDbContext(DbContextOptions<GrandmastersDbContext> options) : DbContext(options)
+namespace GrandmastersHub.Infrastructure.Data
 {
     public DbSet<User> Users => Set<User>();
     public DbSet<Category> Categories => Set<Category>();

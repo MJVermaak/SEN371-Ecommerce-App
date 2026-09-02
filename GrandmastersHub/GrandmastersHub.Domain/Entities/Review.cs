@@ -1,6 +1,8 @@
-namespace GrandmastersHub.Domain.Entities;
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
 
-public class Review
+namespace GrandmastersHub.Domain.Entities
 {
     public int ReviewId { get; set; }
     public int ProductId { get; set; }

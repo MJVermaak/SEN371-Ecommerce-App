@@ -1,8 +1,8 @@
-using GrandmastersHub.Domain.Enums;
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
 
-namespace GrandmastersHub.Domain.Entities;
-
-public class User
+namespace GrandmastersHub.Domain.Entities
 {
     public Guid Id { get; set; }
     public string FullName { get; set; } = string.Empty;

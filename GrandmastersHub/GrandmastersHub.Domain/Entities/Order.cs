@@ -1,8 +1,8 @@
-using GrandmastersHub.Domain.Enums;
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
 
-namespace GrandmastersHub.Domain.Entities;
-
-public class Order
+namespace GrandmastersHub.Domain.Entities
 {
     public int OrderId { get; set; }
     public Guid UserId { get; set; }

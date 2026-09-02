@@ -1,6 +1,8 @@
-namespace GrandmastersHub.Domain.Entities;
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
 
-public class Category
+namespace GrandmastersHub.Domain.Entities
 {
     public int CategoryId { get; set; }
     public string Name { get; set; } = string.Empty;

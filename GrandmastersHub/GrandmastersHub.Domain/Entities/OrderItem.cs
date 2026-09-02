@@ -1,6 +1,8 @@
-namespace GrandmastersHub.Domain.Entities;
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
 
-public class OrderItem
+namespace GrandmastersHub.Domain.Entities
 {
     public int OrderItemId { get; set; }
     public int OrderId { get; set; }
