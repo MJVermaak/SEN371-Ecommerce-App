@@ -32,7 +32,7 @@ Ensure the following tools are installed on your local development environment b
 
 2. Restore Dependencies:
 Navigate into the API project folder and restore the required NuGet packages (including Swashbuckle for Swagger UI).
-- ```cd GrandmastersHub.Api```
+- ```cd GrandmastersHub/GrandmastersHub.Api```
 - ```dotnet restore```
 
 3. Run the Server:
