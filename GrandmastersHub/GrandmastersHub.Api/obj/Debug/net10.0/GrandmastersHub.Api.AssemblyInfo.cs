@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("GrandmastersHub.Api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+46614ad82987fa83822b4d9dd97caffe1d0b5eaf")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7ab36544988874a221673ee5454e5d7bf0756e2d")]
 [assembly: System.Reflection.AssemblyProductAttribute("GrandmastersHub.Api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("GrandmastersHub.Api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
