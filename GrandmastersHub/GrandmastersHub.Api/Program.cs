@@ -30,8 +30,11 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IPasswordHasher<GrandmastersHub.Domain.Entities.User>, PasswordHasher<GrandmastersHub.Domain.Entities.User>>();
 builder.Services.AddScoped<IPasswordService, PasswordService>();
 builder.Services.AddSingleton<ITokenService, JwtTokenService>();
-
 builder.Services.AddControllers();
+builder.Services.AddScoped<ICategoryService, GrandmastersHub.Application.Services.CategoryService>();
+builder.Services.AddScoped<IProductService, GrandmastersHub.Application.Services.ProductService>();
+
+
 builder.Services.AddCors(options => options.AddPolicy("AllowFrontend", policy =>
     policy.WithOrigins("http://localhost:3000", "http://localhost:5173")
         .AllowAnyHeader().AllowAnyMethod().AllowCredentials()));
