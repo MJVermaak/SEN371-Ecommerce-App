@@ -43,6 +43,42 @@ Test the Endpoints:
 Once the server is running, open a web browser and navigate to the Swagger UI dashboard to interact with the API endpoints visually:
 - `http://localhost:5188/swagger`
 
+## API access and authorization
+
+The API uses JWT bearer authentication. In Swagger, select **Authorize** and enter the access token returned by `POST /api/v1/auth/login` or `POST /api/v1/auth/register`. Swagger adds the `Bearer` scheme automatically.
+
+Current endpoint access is:
+
+| Endpoint | Access |
+| --- | --- |
+| `POST /api/v1/auth/register` | Public |
+| `POST /api/v1/auth/login` | Public |
+| `GET /api/v1/auth/me` | Any authenticated user |
+| `GET /api/v1/products` | Public |
+| `GET /api/v1/products/{id}` | Public |
+| `POST /api/v1/products` | Admin only |
+| `GET /api/v1/categories` | Public |
+| `GET /api/v1/categories/{id}` | Public |
+| `POST /api/v1/categories` | Admin only |
+
+Anonymous requests to authenticated endpoints receive `401 Unauthorized`. Authenticated users without the required role receive `403 Forbidden`. New catalog write endpoints should use the `AdminOnly` authorization policy. Cart, order, and review authorization will be documented when those controllers are implemented and their ownership rules are agreed.
+
+## JWT configuration and secrets
+
+JWT settings are read from the `Jwt` configuration section. The checked-in base configuration deliberately leaves `Jwt:SigningKey` empty so the application cannot start in a non-development environment without an explicitly supplied key. The local development settings contain a development-only key and must never be reused in a deployed environment.
+
+For local development, a developer can keep a private key outside source control with .NET user secrets:
+
+```powershell
+cd GrandmastersHub/GrandmastersHub.Api
+dotnet user-secrets init
+dotnet user-secrets set "Jwt:SigningKey" "use-a-random-key-containing-at-least-32-bytes"
+```
+
+For deployment, supply the key through the hosting platform's secret manager. ASP.NET Core maps the environment variable `Jwt__SigningKey` to `Jwt:SigningKey`. The deployed key must be random, at least 32 bytes, restricted to the API service, and rotated if exposed. Do not commit production keys to `appsettings*.json`, `.env` files, CI configuration, or documentation.
+
+Production deployments should also set `Jwt__Issuer`, `Jwt__Audience`, and optionally `Jwt__ExpiryMinutes` to values for that environment. Clients must obtain a new token after signing-key rotation.
+
 ## Database Migrations
 Note: The automated database migration check on startup is currently disabled to allow frontend and API routing tests without a local SQL Server instance.
 When the database schema is ready to be generated or updated, execute the following commands from the root solution folder:
