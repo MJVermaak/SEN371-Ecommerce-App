@@ -1,5 +1,7 @@
 ﻿using GrandmastersHub.Application.DTOs.Catalog;
 using GrandmastersHub.Application.Interfaces;
+using GrandmastersHub.Api.Security;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GrandmastersHub.Api.Controllers
@@ -13,6 +15,7 @@ namespace GrandmastersHub.Api.Controllers
             _productService = productService;
         }
 
+        [AllowAnonymous]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ProductDto>>> GetAll()
         {
@@ -20,6 +23,7 @@ namespace GrandmastersHub.Api.Controllers
             return Ok(products);
         }
 
+        [AllowAnonymous]
         [HttpGet("{id}")]
         public async Task<ActionResult<ProductDto>> GetById(int id)
         {
@@ -28,6 +32,7 @@ namespace GrandmastersHub.Api.Controllers
             return Ok(product);
         }
 
+        [Authorize(Policy = AuthorizationPolicies.AdminOnly)]
         [HttpPost]
         public async Task<ActionResult<ProductDto>> Create(ProductDto productDto)
         {
