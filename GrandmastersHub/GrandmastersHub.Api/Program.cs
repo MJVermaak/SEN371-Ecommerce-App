@@ -3,6 +3,8 @@ using System.Text;
 using GrandmastersHub.Application.Interfaces;
 using GrandmastersHub.Application.Services;
 using GrandmastersHub.Api.Middleware;
+using GrandmastersHub.Api.Security;
+using GrandmastersHub.Domain.Constants;
 using GrandmastersHub.Domain.Interfaces;
 using GrandmastersHub.Infrastructure.Data;
 using GrandmastersHub.Infrastructure.Repositories;
@@ -62,7 +64,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
         ValidateLifetime = true, ClockSkew = TimeSpan.Zero, RoleClaimType = ClaimTypes.Role
     };
 });
-builder.Services.AddAuthorization();
+builder.Services.AddAuthorization(options =>
+    options.AddPolicy(AuthorizationPolicies.AdminOnly, policy =>
+        policy.RequireRole(UserRoles.Admin)));
 
 var app = builder.Build();
 

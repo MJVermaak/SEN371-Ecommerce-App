@@ -1,5 +1,7 @@
 ﻿using GrandmastersHub.Application.DTOs.Catalog;
 using GrandmastersHub.Application.Interfaces;
+using GrandmastersHub.Api.Security;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GrandmastersHub.Api.Controllers
@@ -28,6 +30,7 @@ namespace GrandmastersHub.Api.Controllers
             return Ok(category);
         }
 
+        [Authorize(Policy = AuthorizationPolicies.AdminOnly)]
         [HttpPost]
         public async Task<ActionResult<CategoryDto>> Create(CategoryDto categoryDto)
         {

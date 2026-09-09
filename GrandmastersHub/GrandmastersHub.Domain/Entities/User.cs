@@ -22,7 +22,7 @@ public class User
     public string PasswordHash { get; set; } = string.Empty;
 
     [MaxLength(50)]
-    public string Role { get; set; } = "Customer";
+    public string Role { get; set; } = GrandmastersHub.Domain.Constants.UserRoles.Customer;
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
