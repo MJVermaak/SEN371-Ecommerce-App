@@ -52,10 +52,7 @@ builder.Services.AddSwaggerGen(options =>
         BearerFormat = "JWT",
         Description = "Enter a JWT access token."
     });
-    options.AddSecurityRequirement(document => new OpenApiSecurityRequirement
-    {
-        [new OpenApiSecuritySchemeReference(bearerScheme, document)] = []
-    });
+    options.OperationFilter<AuthorizeOperationFilter>();
 });
 
 var jwtSection = builder.Configuration.GetSection(JwtOptions.SectionName);
