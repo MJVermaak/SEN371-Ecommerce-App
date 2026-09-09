@@ -33,7 +33,7 @@ public sealed class AuthService : IAuthService
             LastName = string.Empty,
             Email = email,
             PasswordHash = string.Empty,
-            Role = "Customer",
+            Role = GrandmastersHub.Domain.Constants.UserRoles.Customer,
             CreatedAt = DateTime.UtcNow
         };
 

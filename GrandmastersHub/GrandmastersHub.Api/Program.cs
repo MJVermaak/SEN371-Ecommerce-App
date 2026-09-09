@@ -3,6 +3,8 @@ using System.Text;
 using GrandmastersHub.Application.Interfaces;
 using GrandmastersHub.Application.Services;
 using GrandmastersHub.Api.Middleware;
+using GrandmastersHub.Api.Security;
+using GrandmastersHub.Domain.Constants;
 using GrandmastersHub.Domain.Interfaces;
 using GrandmastersHub.Infrastructure.Data;
 using GrandmastersHub.Infrastructure.Repositories;
@@ -10,6 +12,7 @@ using GrandmastersHub.Infrastructure.Security;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi;
 using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -39,7 +42,18 @@ builder.Services.AddCors(options => options.AddPolicy("AllowFrontend", policy =>
     policy.WithOrigins("http://localhost:3000", "http://localhost:5173")
         .AllowAnyHeader().AllowAnyMethod().AllowCredentials()));
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    const string bearerScheme = "Bearer";
+    options.AddSecurityDefinition(bearerScheme, new OpenApiSecurityScheme
+    {
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
+        BearerFormat = "JWT",
+        Description = "Enter a JWT access token."
+    });
+    options.OperationFilter<AuthorizeOperationFilter>();
+});
 
 var jwtSection = builder.Configuration.GetSection(JwtOptions.SectionName);
 builder.Services.AddOptions<JwtOptions>().Bind(jwtSection)
@@ -62,7 +76,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
         ValidateLifetime = true, ClockSkew = TimeSpan.Zero, RoleClaimType = ClaimTypes.Role
     };
 });
-builder.Services.AddAuthorization();
+builder.Services.AddAuthorization(options =>
+    options.AddPolicy(AuthorizationPolicies.AdminOnly, policy =>
+        policy.RequireRole(UserRoles.Admin)));
 
 var app = builder.Build();
 
