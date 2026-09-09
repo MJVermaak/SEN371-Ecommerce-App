@@ -15,6 +15,7 @@ namespace GrandmastersHub.Api.Controllers
             _categoryService = categoryService;
         }
 
+        [AllowAnonymous]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CategoryDto>>> GetAll()
         {
@@ -22,6 +23,7 @@ namespace GrandmastersHub.Api.Controllers
             return Ok(categories);
         }
 
+        [AllowAnonymous]
         [HttpGet("{id}")]
         public async Task<ActionResult<CategoryDto>> GetById(int id)
         {

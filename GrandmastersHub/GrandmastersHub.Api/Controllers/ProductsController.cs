@@ -15,6 +15,7 @@ namespace GrandmastersHub.Api.Controllers
             _productService = productService;
         }
 
+        [AllowAnonymous]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ProductDto>>> GetAll()
         {
@@ -22,6 +23,7 @@ namespace GrandmastersHub.Api.Controllers
             return Ok(products);
         }
 
+        [AllowAnonymous]
         [HttpGet("{id}")]
         public async Task<ActionResult<ProductDto>> GetById(int id)
         {
