@@ -154,3 +154,6 @@ vite.config.ts.timestamp-*
 *.db-shm
 *.db-wal
 reference
+
+# Local task notes
+TODO.md
