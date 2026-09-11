@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-
-const API_BASE_URL = 'http://localhost:5188/api/v1';
+import { authApi, saveSession } from '../api/client';
 
 function Login() {
   const navigate = useNavigate();
@@ -25,44 +24,12 @@ function Login() {
     try {
       setLoading(true);
 
-      const response = await fetch(
-        `${API_BASE_URL}/Auth/login`,
-        {
-          method: 'POST',
+      const data = await authApi.login({
+        email: email.trim(),
+        password,
+      });
 
-          headers: {
-            'Content-Type': 'application/json',
-          },
-
-          body: JSON.stringify({
-            email: email.trim(),
-            password,
-          }),
-        }
-      );
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(
-          data.message ||
-          'Invalid email or password. Please try again.'
-        );
-      }
-
-      localStorage.setItem(
-        'accessToken',
-        data.accessToken
-      );
-
-      localStorage.setItem(
-        'user',
-        JSON.stringify({
-          userId: data.userId,
-          email: data.email,
-          role: data.role,
-        })
-      );
+      saveSession(data);
 
       navigate('/profile');
 
@@ -172,8 +139,8 @@ function Login() {
             Don't have an account?
           </span>
 
-          <Link to="/">
-            Return Home
+          <Link to="/register">
+            Create one
           </Link>
 
         </div>
