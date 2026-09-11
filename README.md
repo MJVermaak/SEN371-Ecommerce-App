@@ -25,19 +25,26 @@ Ensure the following tools are installed on your local development environment b
 - SQL Server (Developer or Express edition)
 - Git
 
-## Local Setup & Execution - Run these commands one by one
-1. Clone the Repository:
-- ```git clone https://github.com/MJVermaak/SEN371-Ecommerce-App.git```
-- ```cd SEN371-Ecommerce-App/GrandmastersHub```
+## Local setup
 
-2. Restore Dependencies:
-Navigate into the API project folder and restore the required NuGet packages (including Swashbuckle for Swagger UI).
-- ```cd GrandmastersHub/GrandmastersHub.Api```
-- ```dotnet restore```
+Start SQL Server, then run these commands in PowerShell:
 
-3. Run the Server:
-Launch the development server. By default, the application will listen on HTTP port 5188.
-- ```dotnet run```
+```powershell
+git clone https://github.com/MJVermaak/SEN371-Ecommerce-App.git
+cd SEN371-Ecommerce-App
+.\scripts\Initialize-Database.ps1
+dotnet run --project .\GrandmastersHub\GrandmastersHub.Api
+```
+
+The API uses `ConnectionStrings:DefaultConnection`. The checked-in value targets
+`localhost`, database `GrandmastersHubDb`, with Windows authentication. Configure
+another instance before running setup. See [Database setup](docs/database-setup.md)
+for SQL Express, permissions, existing databases, and non-Windows setup.
+
+The setup script restores the local EF tool, generates `InitialCreate` only when
+there are no migration files, and applies the migrations. Review and commit the
+initial migration and model snapshot once so the team uses the same migration IDs.
+The API listens on HTTP port 5188 with the default launch profile.
 
 Test the Endpoints:
 Once the server is running, open a web browser and navigate to the Swagger UI dashboard to interact with the API endpoints visually:
@@ -100,15 +107,36 @@ VITE_API_BASE_URL=https://api.example.com/api/v1
 
 The shared client parses API errors, attaches stored bearer tokens to authenticated requests, and clears an invalid session after a `401` response. The catalog pages request product data from the backend and render loading, retry, empty, and populated states.
 
-## Database Migrations
-Note: The automated database migration check on startup is currently disabled to allow frontend and API routing tests without a local SQL Server instance.
-When the database schema is ready to be generated or updated, execute the following commands from the root solution folder:
+## Database migrations
 
-To create a new migration:
-- ```dotnet ef migrations add <MigrationName> --project GrandmastersHub.Infrastructure --startup-project GrandmastersHub.Api```
+Development startup applies the committed migrations before accepting requests.
+A missing migration or inaccessible database stops startup with a setup message.
+Production startup never applies migrations automatically.
 
-To apply migrations to the database:
-- ```dotnet ef database update --project GrandmastersHub.Infrastructure --startup-project GrandmastersHub.Api```
+For routing-only development without SQL Server:
+
+```powershell
+$env:Database__ApplyMigrationsOnStartup = "false"
+dotnet run --project .\GrandmastersHub\GrandmastersHub.Api
+```
+
+This switch does not make database-backed endpoints work without a database.
+Remove the override to restore development initialization:
+
+```powershell
+Remove-Item Env:Database__ApplyMigrationsOnStartup
+```
+
+To add a later schema change, run from the repository root:
+
+```powershell
+dotnet tool restore
+dotnet ef migrations add YourMigrationName --project GrandmastersHub/GrandmastersHub.Infrastructure --startup-project GrandmastersHub/GrandmastersHub.Api -- --environment Development
+```
+
+Review migrations before applying them to a database with data. Use a reviewed
+migration script or migration bundle for deployment. Do not mix `EnsureCreated`
+with this migration history or delete a database to fix a login error.
 
 # Project Roadmap (Milestones 1 - 6)
 - **Milestone 1: Project Planning & Architecture (Completed)**
