@@ -79,6 +79,27 @@ For deployment, supply the key through the hosting platform's secret manager. AS
 
 Production deployments should also set `Jwt__Issuer`, `Jwt__Audience`, and optionally `Jwt__ExpiryMinutes` to values for that environment. Clients must obtain a new token after signing-key rotation.
 
+## Frontend API configuration
+
+The React client sends all server requests through `src/api/client.js`. During local development, Vite proxies `/api` requests to the API at `http://localhost:5188`, so start both projects:
+
+```powershell
+# Terminal 1, from GrandmastersHub
+dotnet run --project GrandmastersHub.Api
+
+# Terminal 2, from GrandmastersHub/GrandmastersHub.Api/client
+npm install
+npm run dev
+```
+
+To use a different server, copy `.env.example` to `.env.local` and set `VITE_API_BASE_URL` to the complete API base URL, including `/api/v1`. For example:
+
+```dotenv
+VITE_API_BASE_URL=https://api.example.com/api/v1
+```
+
+The shared client parses API errors, attaches stored bearer tokens to authenticated requests, and clears an invalid session after a `401` response. The catalog pages request product data from the backend and render loading, retry, empty, and populated states.
+
 ## Database Migrations
 Note: The automated database migration check on startup is currently disabled to allow frontend and API routing tests without a local SQL Server instance.
 When the database schema is ready to be generated or updated, execute the following commands from the root solution folder:
