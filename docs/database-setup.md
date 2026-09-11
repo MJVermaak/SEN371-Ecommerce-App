@@ -136,21 +136,24 @@ The existing persistence tests use their own hard-coded SQL connection to
 `GrandmastersHubDb` and some tests write data. Do not run the whole suite against a
 valuable database. These test-connection defaults are unchanged by this patch.
 
-## Validation limits of this patch
+```powershell
+Set-Location 'D:\dev\SEN371-Ecommerce-App'
 
-The patch was prepared through read access to the repository. GitHub rejected
-both Git tree creation and a source-file update with HTTP 403, so no remote file,
-branch, workflow, or commit was changed. The local environment had no .NET SDK,
-PowerShell, or SQL Server. The GitHub runner could not be used because the workflow
-write was denied. The C# tests, PowerShell script, migration generation, and live
-SQL queries were not executed.
+# Generate a signing key for this local session.
+$keyBytes = New-Object byte[] 64
+$rng = [System.Security.Cryptography.RandomNumberGenerator]::Create()
+try {
+    $rng.GetBytes($keyBytes)
+}
+finally {
+    $rng.Dispose()
+}
 
-The modified-file baselines were verified against their fetched Git blob hashes.
-Patch application, whitespace, manifest JSON, and targeted static checks were
-validated locally. These are not a substitute for compilation or runtime tests.
+# Override missing or empty configuration.
+$env:Jwt__SigningKey = [Convert]::ToBase64String($keyBytes)
+$env:DOTNET_ENVIRONMENT = 'Development'
+$env:ASPNETCORE_ENVIRONMENT = 'Development'
+$env:Database__ApplyMigrationsOnStartup = 'true'
 
-## References
-
-- Microsoft EF schema initialization guidance: https://learn.microsoft.com/en-us/ef/core/managing-schemas/ensure-created
-- Microsoft EF split-query guidance: https://learn.microsoft.com/en-us/ef/core/querying/single-split-queries
-- Microsoft EF CLI reference: https://learn.microsoft.com/en-us/ef/core/cli/dotnet
+dotnet run --project .\GrandmastersHub\GrandmastersHub.Api --no-launch-profile -- --urls http://localhost:5188
+```
