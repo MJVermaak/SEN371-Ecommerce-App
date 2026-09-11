@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-
-const API_URL = 'http://localhost:5188';
+import { authApi } from '../api/client';
 
 function Register() {
   const navigate = useNavigate();
@@ -27,31 +26,10 @@ function Register() {
     try {
       setLoading(true);
 
-      const response = await fetch(
-        `${API_URL}/api/v1/Auth/register`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            email: email,
-            password: password,
-          }),
-        }
-      );
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        setError(
-          data?.detail ||
-          data?.title ||
-          'Unable to create your account.'
-        );
-
-        return;
-      }
+      await authApi.register({
+        email: email.trim(),
+        password,
+      });
 
       setMessage(
         'Account created successfully. Redirecting you to sign in...'
@@ -66,7 +44,9 @@ function Register() {
 
     } catch (err) {
       setError(
-        'Unable to connect to the server. Please make sure the backend is running.'
+        err instanceof Error
+          ? err.message
+          : 'Unable to create your account.'
       );
     } finally {
       setLoading(false);
