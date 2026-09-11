@@ -9,6 +9,5 @@ namespace GrandmastersHub.Application.DTOs.Catalog
         public int StockQuantity { get; set; }
         public int CategoryId { get; set; }
         public string CategoryName { get; set; } = string.Empty;
-        public string? ImageUrl { get; set; }
     }
 }

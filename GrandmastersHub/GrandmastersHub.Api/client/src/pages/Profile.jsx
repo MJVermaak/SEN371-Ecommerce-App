@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ApiError, authApi, clearSession } from '../api/client';
+
+const API_BASE_URL = 'http://localhost:5188/api/v1';
 
 function Profile() {
   const navigate = useNavigate();
@@ -14,7 +15,7 @@ function Profile() {
 
     // No authentication token
     if (!token) {
-      clearSession();
+      localStorage.removeItem('user');
 
       navigate('/login', {
         replace: true,
@@ -30,22 +31,44 @@ function Profile() {
       setLoading(true);
       setError('');
 
-      const data = await authApi.getProfile();
+      const response = await fetch(`${API_BASE_URL}/Auth/me`, {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      // Invalid or expired token
+      if (response.status === 401) {
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('user');
+
+        setProfile(null);
+
+        navigate('/login', {
+          replace: true,
+          state: {
+            message:
+              'Your session has expired or is invalid. Please sign in again.',
+          },
+        });
+
+        return;
+      }
+
+      // Other API errors
+      if (!response.ok) {
+        throw new Error(
+          'Unable to load your profile information. Please try again.'
+        );
+      }
+
+      const data = await response.json();
 
       setProfile(data);
 
     } catch (err) {
       setProfile(null);
-
-      if (err instanceof ApiError && err.status === 401) {
-        navigate('/login', {
-          replace: true,
-          state: {
-            message: 'Your session has expired or is invalid. Please sign in again.',
-          },
-        });
-        return;
-      }
 
       setError(
         err instanceof Error
@@ -64,7 +87,8 @@ function Profile() {
 
 
   const handleLogout = () => {
-    clearSession();
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('user');
 
     setProfile(null);
 
