@@ -88,13 +88,37 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-// Apply the checked-in EF Core migrations automatically for local development.
-// This keeps the database schema in sync with the source-controlled model.
-// using (var scope = app.Services.CreateScope())
-// {
-//     var database = scope.ServiceProvider.GetRequiredService<GrandmastersDbContext>();
-//     await database.Database.MigrateAsync();
-// }
+// Initialize the shared database before accepting requests in development.
+// Routing-only runs can opt out with Database__ApplyMigrationsOnStartup=false.
+// Production schema changes must be applied separately by the deployment process.
+if (app.Environment.IsDevelopment()
+    && app.Configuration.GetValue("Database:ApplyMigrationsOnStartup", true))
+{
+    await using var scope = app.Services.CreateAsyncScope();
+    var database = scope.ServiceProvider.GetRequiredService<GrandmastersDbContext>();
+
+    if (!database.Database.GetMigrations().Any())
+    {
+        throw new InvalidOperationException(
+            "No EF Core migrations were found. Run scripts/Initialize-Database.ps1 "
+            + "from the repository root to generate and apply the initial migration, "
+            + "then commit the generated Migrations directory. See docs/database-setup.md.");
+    }
+
+    try
+    {
+        await database.Database.MigrateAsync();
+    }
+    catch (Exception exception) when (exception.GetBaseException() is Microsoft.Data.SqlClient.SqlException)
+    {
+        throw new InvalidOperationException(
+            "Database initialization failed. Check ConnectionStrings:DefaultConnection, "
+            + "the SQL Server instance, the database state, and your login's database "
+            + "access and schema-change permissions. Retries cannot create missing "
+            + "permissions. See docs/database-setup.md.", exception);
+    }
+}
+
 app.UseHttpsRedirection();
 app.UseCors("AllowFrontend");
 app.UseMiddleware<GlobalErrorHandlingMiddleware>();
