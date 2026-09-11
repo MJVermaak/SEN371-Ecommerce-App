@@ -1,4 +1,7 @@
 import Catalog from './pages/Catalog';
+import Login from './pages/Login';
+import Profile from './pages/Profile';
+import Register from './pages/Register';
 
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import './index.css';
@@ -25,6 +28,7 @@ function App() {
               <div className="cart-icon"></div>
               <span>Cart (0)</span>
             </Link>
+            <Link to="/profile">Account</Link>
           </nav>
         </header>
 
@@ -60,6 +64,9 @@ function App() {
             <Route path="/clocks" element={<Catalog title="Precision Clocks" categoryName="clocks" />} />
             <Route path="/books" element={<Catalog title="Chess Literature" categoryName="books" />} />
             <Route path="/bespoke" element={<Catalog title="Bespoke Custom Sets" categoryName="bespoke" />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/profile" element={<Profile />} />
 
   <Route path="/cart" element={<h2 style={{padding: '80px'}}>Shopping Cart (Coming Soon)</h2>} />
 </Routes>
