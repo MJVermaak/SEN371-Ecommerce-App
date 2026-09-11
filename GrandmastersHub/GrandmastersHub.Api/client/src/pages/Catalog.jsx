@@ -1,6 +1,15 @@
+import { useEffect, useState } from 'react';
 import ProductCard from '../pages/ProductCard';
 
 const Catalog = ({ title, categoryName }) => {
+
+    const [visible, setVisible] = useState(false);
+
+    useEffect(() => {
+        setVisible(false);
+        const id = requestAnimationFrame(() => setVisible(true));
+        return () => cancelAnimationFrame(id);
+    }, [categoryName]);
   // A larger master list of mock data covering all categories
   const allMockProducts = [
     {
@@ -51,7 +60,7 @@ const Catalog = ({ title, categoryName }) => {
   const displayProducts = allMockProducts.filter(product => product.category === categoryName);
 
   return (
-    <div className="catalog-container">
+      <div className={`catalog-container ${visible ? 'fade-page' : ''}`}>
       <h2 className="section-title">{title}</h2>
       <div className="product-grid">
         {displayProducts.map(product => (
