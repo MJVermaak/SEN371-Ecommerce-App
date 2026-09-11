@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("GrandmastersHub.Application")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f37d150d2510b47d6890b4d35e0eb899c2972c5a")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+421af37b0e6f1ecadb2b36f531b2976977d1db20")]
 [assembly: System.Reflection.AssemblyProductAttribute("GrandmastersHub.Application")]
 [assembly: System.Reflection.AssemblyTitleAttribute("GrandmastersHub.Application")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
