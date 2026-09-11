@@ -20,6 +20,7 @@ public class ProductRepository : IProductRepository
             .Include(p => p.Category)
             .Include(p => p.Images)
             .Include(p => p.Variants)
+                .ThenInclude(v => v.Inventory)
             .ToListAsync();
     }
 
@@ -29,6 +30,7 @@ public class ProductRepository : IProductRepository
             .Include(p => p.Category)
             .Include(p => p.Images)
             .Include(p => p.Variants)
+                .ThenInclude(v => v.Inventory)
             .Include(p => p.Reviews)
             .FirstOrDefaultAsync(p => p.ProductId == id);
     }
@@ -39,6 +41,7 @@ public class ProductRepository : IProductRepository
             .Include(p => p.Category)
             .Include(p => p.Images)
             .Include(p => p.Variants)
+                .ThenInclude(v => v.Inventory)
             .FirstOrDefaultAsync(p => p.Slug == slug);
     }
 
