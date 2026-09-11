@@ -15,9 +15,23 @@ namespace GrandmastersHub.Application.Services
         {
             _productRepository = productRepository;
         }
-        public async Task<IEnumerable<ProductDto>> GetAllProductsAsync() => new List<ProductDto>();
-        public async Task<ProductDto?> GetProductByIdAsync(int id) => null;
-        public async Task<IEnumerable<ProductDto>> GetProductsByCategoryAsync(int categoryId) => new List<ProductDto>();
+        public async Task<IEnumerable<ProductDto>> GetAllProductsAsync()
+        {
+            var products = await _productRepository.GetAllAsync();
+            return products.Select(ToDto);
+        }
+
+        public async Task<ProductDto?> GetProductByIdAsync(int id)
+        {
+            var product = await _productRepository.GetByIdAsync(id);
+            return product is null ? null : ToDto(product);
+        }
+
+        public async Task<IEnumerable<ProductDto>> GetProductsByCategoryAsync(int categoryId)
+        {
+            var products = await _productRepository.GetAllAsync();
+            return products.Where(product => product.CategoryId == categoryId).Select(ToDto);
+        }
         public async Task<ProductDto> CreateProductAsync(ProductDto productDto)
         {
             if (!ValidationHelper.IsValidPrice(productDto.Price))
@@ -68,5 +82,17 @@ namespace GrandmastersHub.Application.Services
             return true;
         }
         public async Task<bool> DeleteProductAsync(int id) => true;
+
+        private static ProductDto ToDto(Product product) => new()
+        {
+            ProductId = product.ProductId,
+            Name = product.Name,
+            Description = product.Description ?? string.Empty,
+            Price = product.Price,
+            StockQuantity = product.Variants.Sum(variant => variant.Inventory?.Quantity ?? 0),
+            CategoryId = product.CategoryId,
+            CategoryName = product.Category?.Name ?? string.Empty,
+            ImageUrl = product.Images.FirstOrDefault()?.ImageUrl
+        };
     }
 }
