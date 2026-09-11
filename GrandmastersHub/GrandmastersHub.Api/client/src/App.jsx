@@ -1,4 +1,7 @@
 import Catalog from './pages/Catalog';
+import Login from './pages/Login';
+import Profile from './pages/Profile';
+import Register from './pages/Register';
 
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
 import './index.css';
@@ -126,6 +129,11 @@ function App() {
             <Link to="/books">Books</Link>
             <Link to="/bespoke">Bespoke Sets</Link>
             <div className="nav-divider"></div>
+            <Link to="/cart" className="cart-button">
+              <div className="cart-icon"></div>
+              <span>Cart (0)</span>
+            </Link>
+            <Link to="/profile">Account</Link>
                       <Link to="/cart" className="cart-button">
                           <svg
                               className="cart-icon"
@@ -149,6 +157,44 @@ function App() {
         </header>
 
         {/* Dynamic Route Content */}
+        <main className="main-content">
+          <Routes>
+  <Route path="/" element={
+    <section className="hero-section">
+      <div className="hero-content">
+        <div>
+          <div className="eyebrow">
+            <div className="eyebrow-line"></div>
+            <span>The Ultimate Standard of Play</span>
+          </div>
+          <h1 className="hero-title">Master Your Strategy</h1>
+          <p className="hero-desc">
+            Hand-carved premium equipment crafted from rare hardwoods, volcanic obsidian, and fine Italian marble. For grandmasters, collectors, and those who settle for nothing less than absolute perfection.
+          </p>
+          <div className="hero-actions">
+            <Link to="/boards" className="btn-primary">Shop Now</Link>
+            <Link to="/bespoke" className="btn-secondary">The Heritage</Link>
+          </div>
+        </div>
+      </div>
+      <div className="hero-image-placeholder">
+        <img src="/images/Main-Page-Lander.png" alt="Welcome" />
+      </div>
+    </section>
+  } />
+  
+            {/* Registering all category routes to use the Catalog grid layout with filtered data */}
+            <Route path="/boards" element={<Catalog title="The Master's Collection" categoryName="boards" />} />
+            <Route path="/clocks" element={<Catalog title="Precision Clocks" categoryName="clocks" />} />
+            <Route path="/books" element={<Catalog title="Chess Literature" categoryName="books" />} />
+            <Route path="/bespoke" element={<Catalog title="Bespoke Custom Sets" categoryName="bespoke" />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/profile" element={<Profile />} />
+
+  <Route path="/cart" element={<h2 style={{padding: '80px'}}>Shopping Cart (Coming Soon)</h2>} />
+</Routes>
+        </main>
        
               <AnimatedRoutes />
 
