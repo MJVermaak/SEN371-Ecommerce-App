@@ -21,11 +21,7 @@ jobs:
         run: npm ci
         working-directory: GrandmastersHub/GrandmastersHub.Api/client
       - name: Install browser test dependencies
-        run: |
-          npm install --ignore-scripts
-          echo BROWSER_TEST_LOCK_BEGIN
-          cat package-lock.json
-          echo BROWSER_TEST_LOCK_END
+        run: npm ci --ignore-scripts
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
       - name: Test cart refresh ordering in two tabs
