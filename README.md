@@ -28,7 +28,7 @@ Start SQL Server, then open two PowerShell terminals.
 ### Terminal 1: API
 
 ```powershell
-Set-Location 'D:\dev\SEN371-Ecommerce-App'
+Set-Location 'C:\path\to\SEN371-Ecommerce-App'
 
 # Generate a signing key for this local session.
 $keyBytes = New-Object byte[] 64
