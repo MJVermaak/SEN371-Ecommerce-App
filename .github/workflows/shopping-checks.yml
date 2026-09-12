@@ -1,0 +1,32 @@
+name: Shopping checks
+on:
+  pull_request:
+  push:
+    branches: [fix/product-details-and-persistent-cart]
+permissions:
+  contents: read
+jobs:
+  frontend:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: GrandmastersHub/GrandmastersHub.Api/client
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci
+      - run: npm test
+      - run: npm run build
+  shopping-api:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Test shopping HTTP endpoints with isolated SQLite databases
+        run: dotnet test GrandmastersHub/GrandmastersHub.Tests --filter FullyQualifiedName~ShoppingFlowTests --configuration Release

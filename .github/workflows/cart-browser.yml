@@ -1,0 +1,35 @@
+name: Cart browser checks
+on:
+  pull_request:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  cart-browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: GrandmastersHub/GrandmastersHub.Api/client/tests/browser
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install application dependencies
+        run: npm ci
+        working-directory: GrandmastersHub/GrandmastersHub.Api/client
+      - name: Install browser test dependencies
+        run: npm ci --ignore-scripts
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Test cart refresh ordering in two tabs
+        run: npm test
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: cart-browser-failures
+          path: GrandmastersHub/GrandmastersHub.Api/client/tests/browser/test-results
+          if-no-files-found: ignore
+          retention-days: 3

@@ -13,4 +13,7 @@ public interface ICartRepository
     Task UpdateAsync(Cart cart);
 
     Task DeleteAsync(int id);
+
+    // Load and save one user's cart atomically. Serialize writes for that user.
+    Task<Cart> MutateAsync(int userId, Func<Cart, Task> mutation);
 }
