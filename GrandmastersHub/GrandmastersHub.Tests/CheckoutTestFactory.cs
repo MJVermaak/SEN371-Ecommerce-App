@@ -22,6 +22,8 @@ internal sealed class CheckoutTestFactory : WebApplicationFactory<Program>
     private readonly string _name = $"sen371_checkout_{Guid.NewGuid():N}";
     private string DatabaseFile => Path.Combine(Path.GetTempPath(), $"{_name}.db");
     private readonly string? _sqlServer = Environment.GetEnvironmentVariable("CHECKOUT_SQLSERVER_CONNECTION");
+    private bool _databaseInitializationStarted;
+    private int _databaseCleanupStarted;
     public bool UsesSqlServer => !string.IsNullOrWhiteSpace(_sqlServer);
     public FailOrderSaveInterceptor SaveFailure { get; } = new();
     public User Alice { get; } = new() { Email = "alice@example.test", PasswordHash = "unused", Role = "Customer" };
@@ -44,6 +46,18 @@ internal sealed class CheckoutTestFactory : WebApplicationFactory<Program>
         return base.CreateHost(builder);
     }
 
+    private void ConfigureDatabase(DbContextOptionsBuilder options)
+    {
+        if (UsesSqlServer)
+        {
+            // Always use our own disposable database, never the supplied initial catalog.
+            var connection = new SqlConnectionStringBuilder(_sqlServer!)
+            { InitialCatalog = _name, Pooling = false };
+            options.UseSqlServer(connection.ConnectionString);
+        }
+        else options.UseSqlite($"Data Source={DatabaseFile};Pooling=False");
+    }
+
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.UseEnvironment("Testing");
@@ -54,14 +68,7 @@ internal sealed class CheckoutTestFactory : WebApplicationFactory<Program>
             services.RemoveAll<IDbContextOptionsConfiguration<GrandmastersDbContext>>();
             services.AddDbContext<GrandmastersDbContext>(options =>
             {
-                if (UsesSqlServer)
-                {
-                    // Always use our own disposable database, never the supplied initial catalog.
-                    var connection = new SqlConnectionStringBuilder(_sqlServer!)
-                    { InitialCatalog = _name, Pooling = false };
-                    options.UseSqlServer(connection.ConnectionString);
-                }
-                else options.UseSqlite($"Data Source={DatabaseFile};Pooling=False");
+                ConfigureDatabase(options);
                 options.AddInterceptors(SaveFailure);
             });
         });
@@ -71,6 +78,8 @@ internal sealed class CheckoutTestFactory : WebApplicationFactory<Program>
     {
         await Edit(async database =>
         {
+            // A migration or seed failure can still leave a database to remove.
+            _databaseInitializationStarted = true;
             if (UsesSqlServer) await database.Database.MigrateAsync();
             else await database.Database.EnsureCreatedAsync();
             database.Users.AddRange(Alice, Bob);
@@ -130,15 +139,26 @@ internal sealed class CheckoutTestFactory : WebApplicationFactory<Program>
         });
     }
 
-    protected override void Dispose(bool disposing)
+    public override async ValueTask DisposeAsync()
     {
-        if (disposing && UsesSqlServer)
+        try
         {
-            using var scope = Services.CreateScope();
-            scope.ServiceProvider.GetRequiredService<GrandmastersDbContext>().Database.EnsureDeleted();
+            // WebApplicationFactory.Dispose() also calls this override. Let the base
+            // stop the host first; its DisposeAsync calls Dispose(bool) again internally.
+            await base.DisposeAsync().ConfigureAwait(false);
         }
-        base.Dispose(disposing);
-        if (disposing && !UsesSqlServer && File.Exists(DatabaseFile)) File.Delete(DatabaseFile);
+        finally
+        {
+            if (_databaseInitializationStarted && Interlocked.Exchange(ref _databaseCleanupStarted, 1) == 0)
+            {
+                // The host service provider is disposed now. Use an independent context
+                // with the same unique database name, without starting a host or resolving Services.
+                var options = new DbContextOptionsBuilder<GrandmastersDbContext>();
+                ConfigureDatabase(options);
+                await using var database = new GrandmastersDbContext(options.Options);
+                await database.Database.EnsureDeletedAsync().ConfigureAwait(false);
+            }
+        }
     }
 
     internal sealed class FailOrderSaveInterceptor : SaveChangesInterceptor
