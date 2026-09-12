@@ -92,7 +92,12 @@ namespace GrandmastersHub.Application.Services
             StockQuantity = product.Variants.Sum(variant => variant.Inventory?.Quantity ?? 0),
             CategoryId = product.CategoryId,
             CategoryName = product.Category?.Name ?? string.Empty,
-            ImageUrl = product.Images.FirstOrDefault()?.ImageUrl
+            ImageUrl = product.Images.OrderBy(image => image.ProductImageId).FirstOrDefault()?.ImageUrl,
+            ImageUrls = product.Images.OrderBy(image => image.ProductImageId)
+                .Select(image => image.ImageUrl).ToList(),
+            Variants = product.Variants.OrderBy(variant => variant.ProductVariantId)
+                .Select(variant => new ProductVariantDto(variant.ProductVariantId, variant.Name,
+                    variant.Price, Math.Max(0, variant.Inventory?.Quantity ?? 0))).ToList()
         };
     }
 }
