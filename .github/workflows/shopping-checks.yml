@@ -1,0 +1,56 @@
+name: Shopping checks
+on:
+  pull_request:
+  push:
+    branches: [main, fix/product-details-and-persistent-cart, feat/checkout-and-order-history]
+permissions:
+  contents: read
+jobs:
+  frontend:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: GrandmastersHub/GrandmastersHub.Api/client
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci
+      - run: npm test
+      - run: npm run build
+  shopping-api:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Test shopping, checkout and factory cleanup with isolated SQLite databases
+        run: dotnet test GrandmastersHub/GrandmastersHub.Tests --filter 'FullyQualifiedName~ShoppingFlowTests|FullyQualifiedName~CheckoutFlowTests|FullyQualifiedName~CheckoutFactoryDisposalTests' --configuration Release
+  sql-checkout:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    services:
+      sqlserver:
+        image: mcr.microsoft.com/mssql/server:2022-latest
+        env:
+          ACCEPT_EULA: 'Y'
+          MSSQL_SA_PASSWORD: 'SEN371-ci-only_9b2C!2026'
+        ports:
+          - 1433:1433
+        options: >-
+          --health-cmd "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'SEN371-ci-only_9b2C!2026' -C -Q 'SELECT 1' -b"
+          --health-interval 10s --health-timeout 5s --health-retries 20
+    env:
+      # Disposable CI credentials. No application or deployment secrets are used.
+      CHECKOUT_SQLSERVER_CONNECTION: 'Server=localhost,1433;User Id=sa;Password=SEN371-ci-only_9b2C!2026;TrustServerCertificate=True;'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Test migrations, checkout transactions, concurrent orders and cleanup on SQL Server
+        run: dotnet test GrandmastersHub/GrandmastersHub.Tests --filter 'FullyQualifiedName~CheckoutFlowTests|FullyQualifiedName~CheckoutConcurrencyTests|FullyQualifiedName~CheckoutFactoryDisposalTests' --configuration Release

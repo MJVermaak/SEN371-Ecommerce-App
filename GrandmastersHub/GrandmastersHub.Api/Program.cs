@@ -28,6 +28,9 @@ builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<ICartRepository, CartRepository>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
+builder.Services.AddScoped<ICartService, CartService>();
+builder.Services.AddScoped<ICheckoutRepository, CheckoutRepository>();
+builder.Services.AddScoped<IOrderService, OrderService>();
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IPasswordHasher<GrandmastersHub.Domain.Entities.User>, PasswordHasher<GrandmastersHub.Domain.Entities.User>>();

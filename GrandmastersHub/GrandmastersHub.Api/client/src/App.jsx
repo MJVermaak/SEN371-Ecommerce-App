@@ -1,12 +1,21 @@
 import { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Link, Route, Routes, useLocation } from 'react-router-dom';
 import './index.css';
+import './shopping.css';
+import { CartProvider, useCart } from './cart/CartProvider';
+import ProductDetails from './pages/ProductDetails';
 import Cart from './pages/Cart';
 import Catalog from './pages/Catalog';
 import LoadingScreen from './pages/LoadingScreen';
 import Login from './pages/Login';
 import Profile from './pages/Profile';
 import Register from './pages/Register';
+
+function CartCount() {
+  const { cart, loading, error, isAuthenticated } = useCart();
+  const count = isAuthenticated && (loading || error) ? null : cart.totalQuantity;
+  return <span aria-live="polite">Cart{count === null ? '' : ` (${count})`}</span>;
+}
 
 function AnimatedRoutes() {
   const location = useLocation();
@@ -45,10 +54,14 @@ function AnimatedRoutes() {
         <Route path="/clocks" element={<Catalog title="Precision Clocks" categoryName="clocks" />} />
         <Route path="/books" element={<Catalog title="Chess Literature" categoryName="books" />} />
         <Route path="/bespoke" element={<Catalog title="Bespoke Custom Sets" categoryName="bespoke" />} />
+        <Route path="/product/:id" element={<ProductDetails />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="*" element={<section className="shop-page shop-state">
+          <h1>Page not found</h1><Link to="/boards" className="btn-primary">Browse the collection</Link>
+        </section>} />
       </Routes>
     </main>
   );
@@ -66,6 +79,7 @@ function App() {
 
   return (
     <Router>
+      <CartProvider>
       <div className="app-container">
         <header className="main-header">
           <Link to="/" className="logo-group">
@@ -96,7 +110,7 @@ function App() {
                 <circle cx="9" cy="19" r="1.5" fill="currentColor" />
                 <circle cx="17" cy="19" r="1.5" fill="currentColor" />
               </svg>
-              <span>Cart (0)</span>
+              <CartCount />
             </Link>
             <Link to="/profile">Account</Link>
           </nav>
@@ -124,6 +138,7 @@ function App() {
           </div>
         </footer>
       </div>
+      </CartProvider>
     </Router>
   );
 }

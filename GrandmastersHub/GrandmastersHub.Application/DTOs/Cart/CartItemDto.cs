@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+namespace GrandmastersHub.Application.DTOs.Cart;
 
-namespace GrandmastersHub.Application.DTOs.Cart
+public sealed record CartItemDto(
+    int CartItemId, int ProductId, int ProductVariantId, string Name, string VariantName,
+    string CategoryName, string? ImageUrl, int Quantity, decimal UnitPrice, int StockQuantity)
 {
-    internal class CartItemDto
-    {
-    }
+    public decimal LineTotal => UnitPrice * Quantity;
+    public bool IsAvailable => Quantity <= StockQuantity;
 }
+
