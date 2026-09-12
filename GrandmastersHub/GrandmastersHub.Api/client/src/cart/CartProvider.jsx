@@ -17,7 +17,11 @@ export function CartProvider({ children }) {
   const mounted = useRef(false);
 
   const refresh = useCallback(async () => {
-    if (mutation.current) return;
+    if (mutation.current) {
+      // Coalesce signals on this mutation, not across sessions.
+      mutation.current.refreshRequested = true;
+      return;
+    }
     const currentToken = readToken();
     const id = ++requestId.current;
     activeRead.current?.abort();
@@ -75,7 +79,7 @@ export function CartProvider({ children }) {
     const currentToken = readToken();
     if (!currentToken) throw new ApiError('Please sign in to use your cart.', 401);
     if (mutation.current) throw new ApiError('Your previous cart change is still saving.', 409);
-    const marker = {};
+    const marker = { refreshRequested: false };
     mutation.current = marker;
     ++requestId.current;
     activeRead.current?.abort();
@@ -96,8 +100,8 @@ export function CartProvider({ children }) {
       if (mounted.current && mutation.current === marker) {
         mutation.current = null;
         setPending(false);
-        // Re-read stock and reconcile a response lost after a successful server commit.
-        if (failed) void refresh();
+        // Reconcile lost responses and refresh signals received while this write was pending.
+        if (failed || marker.refreshRequested) void refresh();
       }
     }
   }, [refresh]);
