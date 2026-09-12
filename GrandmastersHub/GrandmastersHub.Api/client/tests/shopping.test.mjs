@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { collectionPath, fallbackImage, money, remainingQuantity, safeReturnTo, validQuantity } from '../src/lib/shopping.js';
+import { checkoutKey, collectionPath, fallbackImage, money, remainingQuantity, safeReturnTo, validQuantity } from '../src/lib/shopping.js';
 
 for (const name of ['Boards', 'Clocks', 'Books', 'Bespoke']) {
   test(`${name} uses its collection route and a local fallback image`, () => {
@@ -27,4 +27,12 @@ test('login return path allows only known local routes', () => {
   assert.equal(safeReturnTo('/cart'), '/cart');
   for (const value of [null, '//evil.example', 'https://evil.example', '/\\evil.example', '/product/1?next=bad', '/product/0'])
     assert.equal(safeReturnTo(value), '/profile');
+});
+test('checkout and owned order pages are valid login return paths', () => {
+  assert.equal(safeReturnTo('/checkout'), '/checkout');
+  assert.equal(safeReturnTo('/orders'), '/orders');
+  assert.equal(safeReturnTo('/orders/42'), '/orders/42');
+});
+test('checkout references are valid version 4 UUIDs', () => {
+  assert.match(checkoutKey(), /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i);
 });

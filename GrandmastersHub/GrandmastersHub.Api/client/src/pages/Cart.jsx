@@ -77,8 +77,9 @@ export default function Cart() {
         <div className="saved-cart-summary-row"><span>Items</span><span>{cart.totalQuantity}</span></div>
         <div className="saved-cart-subtotal"><span>Subtotal</span><strong>{money(cart.subtotal)}</strong></div>
         <p className="shop-note">Your products are saved to your account. Prices and availability come from the current catalog.</p>
-        <div className="checkout-notice"><h3>Checkout is not available yet</h3>
-          <p>No order has been placed and no payment will be taken. Delivery charges are not calculated.</p></div>
+        <Link to="/checkout" className="btn-primary detail-add">Proceed to checkout</Link>
+        <div className="checkout-notice"><h3>Payment on delivery</h3>
+          <p>Delivery and the final total are confirmed on the next step. No online payment is taken.</p></div>
       </aside>
     </div>
   </section>;

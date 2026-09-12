@@ -10,6 +10,9 @@ import LoadingScreen from './pages/LoadingScreen';
 import Login from './pages/Login';
 import Profile from './pages/Profile';
 import Register from './pages/Register';
+import Checkout from './pages/Checkout';
+import OrderDetails from './pages/OrderDetails';
+import Orders from './pages/Orders';
 
 function CartCount() {
   const { cart, loading, error, isAuthenticated } = useCart();
@@ -56,6 +59,9 @@ function AnimatedRoutes() {
         <Route path="/bespoke" element={<Catalog title="Bespoke Custom Sets" categoryName="bespoke" />} />
         <Route path="/product/:id" element={<ProductDetails />} />
         <Route path="/cart" element={<Cart />} />
+        <Route path="/checkout" element={<Checkout />} />
+        <Route path="/orders" element={<Orders />} />
+        <Route path="/orders/:id" element={<OrderDetails />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/profile" element={<Profile />} />

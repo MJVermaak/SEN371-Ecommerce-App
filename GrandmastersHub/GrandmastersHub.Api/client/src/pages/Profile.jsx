@@ -300,6 +300,8 @@ function Profile() {
       {/* ACTIONS */}
       <div className="profile-actions profile-bottom-actions">
 
+        <Link className="btn-primary" to="/orders">Order History</Link>
+
         <button
           className="btn-secondary"
           onClick={loadProfile}

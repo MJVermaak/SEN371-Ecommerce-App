@@ -20,8 +20,16 @@ export function fallbackImage(category = '') {
 
 export function safeReturnTo(value) {
   // Only application routes can be post-login destinations.
-  return typeof value === 'string' && /^\/(product\/[1-9]\d*|cart|boards|books|clocks|bespoke|profile)$/.test(value)
+  return typeof value === 'string' && /^\/(product\/[1-9]\d*|orders\/[1-9]\d*|cart|checkout|orders|boards|books|clocks|bespoke|profile)$/.test(value)
     ? value : '/profile';
+}
+
+export function checkoutKey() {
+  if (globalThis.crypto?.randomUUID) return globalThis.crypto.randomUUID();
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (character) => {
+    const random = Math.floor(Math.random() * 16);
+    return (character === 'x' ? random : (random & 3) | 8).toString(16);
+  });
 }
 
 export function remainingQuantity(stock, inCart = 0) {

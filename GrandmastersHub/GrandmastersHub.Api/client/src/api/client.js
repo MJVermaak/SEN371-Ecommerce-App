@@ -106,3 +106,18 @@ export const cartApi = {
   }),
   remove: (itemId) => apiRequest(`cart/items/${itemId}`, { method: 'DELETE', auth: true }),
 };
+
+export const ordersApi = {
+  preview: (signal) => apiRequest('orders/checkout', { auth: true, signal }),
+  place: (checkoutKey, cartFingerprint, shippingAddress) => apiRequest('orders', {
+    method: 'POST', auth: true, body: { checkoutKey, cartFingerprint, shippingAddress },
+  }),
+  list: (page = 1, pageSize = 10, signal) => apiRequest(
+    `orders?page=${encodeURIComponent(page)}&pageSize=${encodeURIComponent(pageSize)}`,
+    { auth: true, signal },
+  ),
+  get: (id, signal) => apiRequest(`orders/${id}`, { auth: true, signal }),
+  getByCheckout: (checkoutKey, signal) => apiRequest(
+    `orders/by-checkout/${encodeURIComponent(checkoutKey)}`, { auth: true, signal },
+  ),
+};
