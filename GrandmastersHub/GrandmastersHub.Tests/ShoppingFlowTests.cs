@@ -13,6 +13,7 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Hosting;
 
 namespace GrandmastersHub.Tests;
 
@@ -207,14 +208,21 @@ public sealed class ShoppingFlowTests
             Images = new List<ProductImage> { new() { ImageUrl = "/images/Shopping-plain-chess-board.jpg" } }
         };
 
-        protected override void ConfigureWebHost(IWebHostBuilder builder)
+        protected override IHost CreateHost(IHostBuilder builder)
         {
-            builder.UseEnvironment("Testing");
-            builder.ConfigureAppConfiguration((_, config) => config.AddInMemoryCollection(new Dictionary<string, string?>
+            // Program reads JWT settings before Build. Host configuration is supplied
+            // to the minimal-host entry point early enough, without process-wide secrets.
+            builder.ConfigureHostConfiguration(config => config.AddInMemoryCollection(new Dictionary<string, string?>
             {
                 ["Jwt:SigningKey"] = "shopping-tests-only-do-not-use-outside-tests-2026",
                 ["Database:ApplyMigrationsOnStartup"] = "false"
             }));
+            return base.CreateHost(builder);
+        }
+
+        protected override void ConfigureWebHost(IWebHostBuilder builder)
+        {
+            builder.UseEnvironment("Testing");
             builder.ConfigureServices(services =>
             {
                 services.RemoveAll<GrandmastersDbContext>();
