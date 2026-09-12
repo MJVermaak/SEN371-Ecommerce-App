@@ -2,7 +2,7 @@ name: Shopping checks
 on:
   pull_request:
   push:
-    branches: [fix/product-details-and-persistent-cart]
+    branches: [main, fix/product-details-and-persistent-cart, feat/checkout-and-order-history]
 permissions:
   contents: read
 jobs:
@@ -28,5 +28,29 @@ jobs:
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '10.0.x'
-      - name: Test shopping HTTP endpoints with isolated SQLite databases
-        run: dotnet test GrandmastersHub/GrandmastersHub.Tests --filter FullyQualifiedName~ShoppingFlowTests --configuration Release
+      - name: Test shopping and checkout HTTP endpoints with isolated SQLite databases
+        run: dotnet test GrandmastersHub/GrandmastersHub.Tests --filter 'FullyQualifiedName~ShoppingFlowTests|FullyQualifiedName~CheckoutFlowTests' --configuration Release
+  sql-checkout:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    services:
+      sqlserver:
+        image: mcr.microsoft.com/mssql/server:2022-latest
+        env:
+          ACCEPT_EULA: 'Y'
+          MSSQL_SA_PASSWORD: 'SEN371-ci-only_9b2C!2026'
+        ports:
+          - 1433:1433
+        options: >-
+          --health-cmd "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'SEN371-ci-only_9b2C!2026' -C -Q 'SELECT 1' -b"
+          --health-interval 10s --health-timeout 5s --health-retries 20
+    env:
+      # Disposable CI credentials. No application or deployment secrets are used.
+      CHECKOUT_SQLSERVER_CONNECTION: 'Server=localhost,1433;User Id=sa;Password=SEN371-ci-only_9b2C!2026;TrustServerCertificate=True;'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Test migrations, checkout transactions and concurrent orders on SQL Server
+        run: dotnet test GrandmastersHub/GrandmastersHub.Tests --filter 'FullyQualifiedName~CheckoutFlowTests|FullyQualifiedName~CheckoutConcurrencyTests' --configuration Release
