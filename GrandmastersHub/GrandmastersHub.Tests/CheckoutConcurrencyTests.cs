@@ -19,8 +19,8 @@ public sealed class CheckoutConcurrencyTests
         var request = await CheckoutTestFactory.Request(first);
         var responses = await Task.WhenAll(first.PostAsJsonAsync("/api/v1/orders", request),
             second.PostAsJsonAsync("/api/v1/orders", request));
-        Assert.Single(responses.Where(response => response.StatusCode == HttpStatusCode.Created));
-        Assert.Single(responses.Where(response => response.StatusCode == HttpStatusCode.OK));
+        Assert.Single(responses, response => response.StatusCode == HttpStatusCode.Created);
+        Assert.Single(responses, response => response.StatusCode == HttpStatusCode.OK);
         var orders = await Task.WhenAll(responses.Select(CheckoutFlowTests.ReadOrder));
         Assert.Equal(orders[0].OrderId, orders[1].OrderId);
         await app.AssertState(1, 3, 0);
@@ -43,8 +43,8 @@ public sealed class CheckoutConcurrencyTests
         var bobRequest = await CheckoutTestFactory.Request(bob);
         var responses = await Task.WhenAll(alice.PostAsJsonAsync("/api/v1/orders", aliceRequest),
             bob.PostAsJsonAsync("/api/v1/orders", bobRequest));
-        Assert.Single(responses.Where(response => response.StatusCode == HttpStatusCode.Created));
-        Assert.Single(responses.Where(response => response.StatusCode == HttpStatusCode.Conflict));
+        Assert.Single(responses, response => response.StatusCode == HttpStatusCode.Created);
+        Assert.Single(responses, response => response.StatusCode == HttpStatusCode.Conflict);
         await app.AssertState(1, 0, 1);
         var remaining = responses[0].StatusCode == HttpStatusCode.Conflict ? alice : bob;
         Assert.Single((await remaining.GetFromJsonAsync<CartDto>("/api/v1/cart"))!.Items);

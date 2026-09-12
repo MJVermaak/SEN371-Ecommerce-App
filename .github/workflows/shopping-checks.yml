@@ -28,8 +28,8 @@ jobs:
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '10.0.x'
-      - name: Test shopping and checkout HTTP endpoints with isolated SQLite databases
-        run: dotnet test GrandmastersHub/GrandmastersHub.Tests --filter 'FullyQualifiedName~ShoppingFlowTests|FullyQualifiedName~CheckoutFlowTests' --configuration Release
+      - name: Test shopping, checkout and factory cleanup with isolated SQLite databases
+        run: dotnet test GrandmastersHub/GrandmastersHub.Tests --filter 'FullyQualifiedName~ShoppingFlowTests|FullyQualifiedName~CheckoutFlowTests|FullyQualifiedName~CheckoutFactoryDisposalTests' --configuration Release
   sql-checkout:
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -52,5 +52,5 @@ jobs:
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '10.0.x'
-      - name: Test migrations, checkout transactions and concurrent orders on SQL Server
-        run: dotnet test GrandmastersHub/GrandmastersHub.Tests --filter 'FullyQualifiedName~CheckoutFlowTests|FullyQualifiedName~CheckoutConcurrencyTests' --configuration Release
+      - name: Test migrations, checkout transactions, concurrent orders and cleanup on SQL Server
+        run: dotnet test GrandmastersHub/GrandmastersHub.Tests --filter 'FullyQualifiedName~CheckoutFlowTests|FullyQualifiedName~CheckoutConcurrencyTests|FullyQualifiedName~CheckoutFactoryDisposalTests' --configuration Release
