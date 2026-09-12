@@ -7,7 +7,7 @@ From `GrandmastersHub/GrandmastersHub.Api/client`:
 ```sh
 npm ci
 cd tests/browser
-npm install --ignore-scripts
+npm ci --ignore-scripts
 npx playwright install chromium
 npm test
 ```
