@@ -2,6 +2,16 @@
 
 A full-stack e-commerce application for SEN371, built with ASP.NET Core, Entity Framework Core, SQL Server, React, and Vite.
 
+## Screenshots
+
+### Storefront
+
+![GrandmastersHub storefront](docs/screenshots/home.png)
+
+### Product catalog
+
+![GrandmastersHub chess board catalog](docs/screenshots/catalog.png)
+
 ## Prerequisites
 
 - .NET 10 SDK
